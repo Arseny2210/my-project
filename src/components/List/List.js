@@ -3,13 +3,18 @@ import './List.scss';
 import itemRemove from './../../assets/img/remove.svg'
 import Badge from './../Badge/Badge';
 
-export default function List({items, isRemovable, onDelete, clickAddButton}) {
-  // console.log(items);
+export default function List({items, active, isRemovable, onDelete, clickAddButton = null, onItemActive = null}) {
+  let activeListHandler = (id=null) => {
+    if (clickAddButton == null) {
+      onItemActive(id)
+    }
+  }
+
   return (
     <ul className="list" onClick={clickAddButton}>
     {
       items.map((item, ind) => (
-        <li key={ind} className={item.active ? 'active' : ''}>
+        <li onClick={()=>onItemActive &&  activeListHandler(item.id)} key={ind} className={active && (active == item.id || active == 'default') ? 'active' : ''}>
           <i>
             {item.icon ? 
               (<img src={items.icon}/>)
@@ -17,9 +22,16 @@ export default function List({items, isRemovable, onDelete, clickAddButton}) {
               ( <Badge color={item.color.name}/>)
             }
           </i>
-          <span>{item.name}</span>
+          <span>
+            {item.name}
+            {item.tasks && item.tasks.length > 0 && ` (${item.tasks.length})`}
+          </span>
             {isRemovable && 
-              (<img onClick={()=>onDelete(ind)} className='list__remove-icon' src={itemRemove}/>)
+              (<img onClick={()=>{
+                if (window.confirm('Вы действительно хотите удалить список?')) {
+                  onDelete(item.id)
+                }
+              }} className='list__remove-icon' src={itemRemove}/>)
             }
         </li>
       ))

@@ -7,12 +7,26 @@ export default function AddList({addSvg,name,closeSvg, colors, addList}) {
   let[isVisible, setVisible] = React.useState(false);
   let[activeBadge, setActiveBadge] = React.useState(1);
   let [inputValue, setInputValue] = React.useState('');
+  let [isLoading,setLoading] = React.useState(false)
 
   let closeHandler = () => {
     setInputValue('');
     setActiveBadge(colors[0].id)
     setVisible(false);
   }
+  const clickHandler = () =>{
+    if (inputValue) {
+      setLoading(true)
+      const color = colors.find(color=> color.id == activeBadge);
+      addList(inputValue, activeBadge, color);
+      setLoading(false)
+      closeHandler()
+    } else {
+      alert('Введите название списка');
+      
+    } 
+  }
+  console.log()
   return (
     <div className='add-list'>
       <List items={[
@@ -33,11 +47,7 @@ export default function AddList({addSvg,name,closeSvg, colors, addList}) {
             />)
           )}
           </div>
-          <button onClick={()=>{inputValue ?
-            addList(inputValue, activeBadge, colors.find(color=> color.id == activeBadge))
-            : alert('Введите название списка');
-            closeHandler()
-          }} 
+          <button onClick={clickHandler} 
             className='button'>Добавить</button>
       </div>)
       }
